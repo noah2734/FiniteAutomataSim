@@ -173,6 +173,39 @@ void getTransitions(std::vector<State> *states, std::vector<char> *alphabet, std
     }
 }
 
+bool testString(std::string input, DFA *dfa) {
+        if (input.length() == 0 && (*dfa).start.isAccept) {
+            return true;
+        }
+        
+        bool accepted = false;
+        //start at start state
+        std::string currentState = (*dfa).start.name;
+        for (int i = input.length() - 1; i >= 0; i--) {
+            accepted = false;
+            std::cout << currentState << " -> ";
+            //find corresponding transition, and set current state to the state it transitions to
+            //std::cout << (*dfa).transitions.size() << "\n";
+            for (int j = 0; j < (*dfa).transitions.size(); j++) {
+                if (((*dfa).transitions[j].from.name) == currentState && (*dfa).transitions[j].symbol == input[i]) {
+                    //std::cout << (*dfa).transitions[j].to.name << "\n";
+                    currentState = ((*dfa).transitions[j].to.name);
+                    if (i == 0 && (*dfa).transitions[j].to.isAccept) {
+                        accepted = true;
+                    }
+                    break;
+                }
+            }
+        }
+        std::cout << currentState << "\n";
+        if (accepted) {
+            std::cout << "ACCEPT\n";
+        }
+        else {
+            std::cout << "REJECT\n";
+        }
+}
+
 int main() {
     std::cout << "Let's create a DFA!\n";
 
@@ -190,6 +223,19 @@ int main() {
     std::cout << "DFA created!\n";
     std::cout << "Here is the DFA you created:\n";
     dfa.printDFA();
+
+    std::cout << "Now lets test some strings!\n";
+
+    while (1) {
+    std::cout << "Enter a string to test, or enter 'q' to quit.\n";
+        std::cout << "Input will be read from right to left.\n";
+        std::string input;
+        std::cin >> input;
+        testString(input, &dfa);
+        if (input == "q") {
+            break;
+        }
+    }
 
     return 0;
 }
